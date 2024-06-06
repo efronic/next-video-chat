@@ -24,10 +24,10 @@ const formSchema = z.object({
     })
     .max(50),
   description: z.string().min(1).max(250),
-  language: z
+  tags: z
     .string()
     .min(2, {
-      message: 'Language cannot be null.',
+      message: 'Tags cannot be null.',
     })
     .max(50),
   githubRepo: z.string().min(1).max(50),
@@ -40,7 +40,7 @@ export default function CreateRoomForm() {
     defaultValues: {
       name: '',
       description: '',
-      language: '',
+      tags: '',
       githubRepo: '',
     },
   });
@@ -64,8 +64,9 @@ export default function CreateRoomForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder='Lupin Is Awesome' />
               </FormControl>
+              <FormDescription>This is your public room name.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -76,22 +77,30 @@ export default function CreateRoomForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
+              <FormControl></FormControl>
+              <Input
+                {...field}
+                placeholder='Im working on a side project, come join me'
+              />
+              <FormDescription>
+                Please describe what you are be coding on
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name='language'
+          name='tags'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Language</FormLabel>
+              <FormLabel>Tags</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder='typescript, nextjs, tailwind' />
               </FormControl>
+              <FormDescription>
+                Please separate tags with a comma.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -103,8 +112,14 @@ export default function CreateRoomForm() {
             <FormItem>
               <FormLabel>GitHub Repository</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input
+                  {...field}
+                  placeholder='https://github.com/efronic/next-video-chat'
+                />
               </FormControl>
+              <FormDescription>
+                Please put a link to the project you are working on
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

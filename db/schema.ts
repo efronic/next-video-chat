@@ -73,7 +73,7 @@ export const room = pgTable('room', {
     .primaryKey(),
   name: text('name').notNull(),
   description: text('description').notNull(),
-  language: text('langugage').notNull(),
+  tags: text('tags').notNull(),
   githubRepo: text('githubRepo'),
   userId: text('userId')
     .notNull()

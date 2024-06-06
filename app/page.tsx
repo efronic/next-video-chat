@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { db } from '@/db';
 import Link from 'next/link';
 import {
   Card,
@@ -9,32 +8,49 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+
 import { Room } from '@/db/schema';
 import { GithubIcon } from 'lucide-react';
 import { getRooms } from '@/data-access/rooms';
+import { splitTags, TagsList } from '@/components/ui/tags-list';
 
 function RoomCard({ room }: { room: Room }) {
   return (
-    <Card>
-      <CardHeader>
+    <Card className='flex flex-col'>
+      <CardHeader className='flex flex-row justify-between items-center'>
         <CardTitle>{room.name}</CardTitle>
-        <CardDescription>{room.description}</CardDescription>
+        {room.githubRepo && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={room.githubRepo}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  <GithubIcon />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{room.githubRepo}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </CardHeader>
       <CardContent>
-        {room.githubRepo && (
-          <Link
-            className='flex items-center gap-2'
-            href={room.githubRepo}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <GithubIcon /> Github Repo
-          </Link>
-        )}
+        <CardDescription className='mb-4'>{room.description}</CardDescription>
+        <TagsList tags={splitTags(room.tags)} />
       </CardContent>
-      <CardFooter>
+      <CardFooter className='mt-auto'>
         <Button asChild>
-          <Link href={`/room/${room.id}`}>Join room</Link>
+          <Link href={`/rooms/${room.id}`}>Join room</Link>
         </Button>
       </CardFooter>
     </Card>
