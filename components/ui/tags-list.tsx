@@ -1,19 +1,22 @@
 'use client';
-import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { badgeVariants } from './badge';
 
 export function TagsList({ tags }: { tags: string[] }) {
   const router = useRouter();
   return (
-    <div className='flex space-x-2'>
+    <div className='flex gap-2 flex-wrap'>
       {tags.map((tag) => (
-        <Badge
-          onClick={() => router.push(`/?search=${tag}`)}
+        <button
+          className={cn(badgeVariants())}
           key={tag}
-          className='px-2 py-1 text-sm font-semibold bg-gray-200 rounded-full'
+          onClick={() => {
+            router.push(`/?search=${tag}`);
+          }}
         >
           {tag}
-        </Badge>
+        </button>
       ))}
     </div>
   );
