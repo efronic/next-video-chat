@@ -2,14 +2,15 @@ import { db } from '@/db';
 import { Room, room } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { eq, like } from 'drizzle-orm';
+
 export async function getRooms(searchTerm: string | undefined) {
   const whereClause = searchTerm
     ? like(room.tags, `%${searchTerm}%`)
     : undefined;
-  console.log('efron ahmadifar whereClause', searchTerm, whereClause);
   const rooms = await db.query.room.findMany({ where: whereClause });
   return rooms;
 }
+
 export async function getRoom(roomId: string) {
   return await db.query.room.findFirst({ where: eq(room.id, roomId) });
 }
@@ -37,14 +38,22 @@ export async function createRoom(
   if (!session) {
     throw new Error('You must be logged in to create a room.');
   }
-  await db.insert(room).values({ ...roomData, userId });
+  const inserted = await db
+    .insert(room)
+    .values({ ...roomData, userId })
+    .returning();
+  return inserted[0];
 }
-export async function editRoom(
-  roomData: Room,
-) {
+
+export async function editRoom(roomData: Room) {
   const session = await getSession();
   if (!session) {
     throw new Error('You must be logged in to create a room.');
   }
-  await db.update(room).set(roomData).where(eq(room.id, roomData.id));
+  const updated = await db
+    .update(room)
+    .set(roomData)
+    .where(eq(room.id, roomData.id))
+    .returning();
+  return updated[0];
 }

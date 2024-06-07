@@ -14,28 +14,34 @@ import { Input } from '@/components/ui/input';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SearchIcon } from 'lucide-react';
 import { useEffect } from 'react';
+import { unstable_noStore } from 'next/cache';
 
 const formSchema = z.object({
   search: z.string().min(0).max(50),
 });
+
 export function SearchBar() {
   const router = useRouter();
   const query = useSearchParams();
   const search = query.get('search') ?? '';
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       search: query.get('search') ?? '',
     },
   });
+
   useEffect(() => {
     form.setValue('search', search);
   }, [form, search]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    unstable_noStore();
     if (values.search) {
-      router.push(`/?search=${values.search}`);
+      router.push(`/browse/?search=${values.search}`);
     } else {
-      router.push('/');
+      router.push('/browse');
     }
   }
   return (
@@ -66,7 +72,7 @@ export function SearchBar() {
             variant='link'
             onClick={() => {
               form.setValue('search', '');
-              router.push('/');
+              router.push('/browse/');
             }}
           >
             Clear

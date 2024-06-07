@@ -10,59 +10,114 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogInIcon, LogOutIcon } from 'lucide-react';
+import { LogInIcon, LogOutIcon, UserX } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { deleteAccountAction } from './actions';
 
 function AccountDropdown() {
   const session = useSession();
   const router = useRouter();
   const pathName = usePathname();
+  const [open, setOpen] = useState(false);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant={'link'}>
-          <Avatar className='mr-2'>
-            <AvatarImage src={session.data?.user?.image ?? ''} />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+    <>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently remove your
+              account and any data your have.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                await deleteAccountAction();
+                signOut({ callbackUrl: '/' });
+              }}
+            >
+              Yes, delete my account
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={'link'}>
+            <Avatar className='mr-2'>
+              <AvatarImage src={session.data?.user?.image ?? ''} />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
 
-          {session.data?.user ? session.data?.user?.name : 'Log in'}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {pathName !== '/your-rooms' ? (
+            {session.data?.user ? session.data?.user?.name : 'Log in'}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {pathName !== '/your-rooms' ? (
+            <DropdownMenuItem
+              onClick={() => {
+                router.push('/your-rooms');
+              }}
+            >
+              My Rooms
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              onClick={() => {
+                router.push('/');
+              }}
+            >
+              Home
+            </DropdownMenuItem>
+          )}
+          {pathName !== '/create-rrom' && (
+            <DropdownMenuItem
+              onClick={() => {
+                router.push('/create-room');
+              }}
+            >
+              Create a Room
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
-              router.push('/your-rooms');
+              setOpen(true);
             }}
           >
-            My rooms
+            <UserX className='mr-2' /> Delete Account
           </DropdownMenuItem>
-        ) : (
+          <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => {
-              router.push('/');
-            }}
+            onClick={() =>
+              signOut({
+                callbackUrl: '/',
+              })
+            }
           >
-            Home
+            <LogOutIcon className='mr-2' /> Sign Out
           </DropdownMenuItem>
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() =>
-            signOut({
-              callbackUrl: '/',
-            })
-          }
-        >
-          <LogOutIcon className='mr-2' /> Sign Out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }
 
@@ -71,8 +126,8 @@ function Header() {
   const isLoggedIn = !!session.data;
 
   return (
-    <header className='bg-gray-100 py-2 dark:bg-gray-900 container mx-auto z-10 relative'>
-      <div className='flex justify-between items-center'>
+    <header className='bg-gray-100 py-2 dark:bg-gray-900 z-10 relative'>
+      <div className='container mx-auto flex justify-between items-center'>
         <Link
           className='flex items-center gap-2 text-xl hover:underline'
           href='/'

@@ -13,6 +13,7 @@ export default async function Home({
 }) {
   unstable_noStore();
   const rooms = await getRooms(searchParams.search || undefined);
+
   return (
     <main className='min-h-screen p-16'>
       <div className='flex justify-between items-center mb-8'>
@@ -25,9 +26,11 @@ export default async function Home({
         <SearchBar />
       </div>
       <div className='grid grid-cols-3 gap-4'>
-        {rooms.map((room) => (
-          <RoomCard key={room.id} room={room} />
-        ))}
+        {rooms && rooms.length > 0 ? (
+          rooms.map((room) => <RoomCard key={room.id} room={room} />)
+        ) : (
+          <div>No rooms found</div>
+        )}
       </div>
     </main>
   );

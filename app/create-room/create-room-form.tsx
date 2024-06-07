@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { createRoomAction } from './actions';
+import { toast } from '@/components/ui/use-toast';
 
 const formSchema = z.object({
   name: z
@@ -35,6 +36,7 @@ const formSchema = z.object({
 
 export default function CreateRoomForm() {
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,15 +46,13 @@ export default function CreateRoomForm() {
       githubRepo: '',
     },
   });
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    // TODO - Implement form submission
-    const something = await createRoomAction(values);
-
-    console.log(values);
-    router.push('/');
+    const room = await createRoomAction(values);
+    toast({
+      title: 'Room Created',
+      description: 'Your room was successfully created',
+    });
+    router.push(`/rooms/${room.id}`);
   }
   return (
     <Form {...form}>

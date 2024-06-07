@@ -61,7 +61,7 @@ export function MyVideoPlayer({ room }: { room: Room }) {
             <SpeakerLayout />
             <CallControls
               onLeave={() => {
-                router.push('/');
+                router.push('/your-rooms');
               }}
             />
             <CallParticipantsList onClose={() => undefined} />
