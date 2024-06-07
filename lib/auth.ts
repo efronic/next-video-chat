@@ -49,7 +49,7 @@ export const authConfig = {
           image: token.picture,
         };
       }
-      console.log('efron ahmadifar session from auth', session)
+      // console.log('efron ahmadifar session from auth', session)
       return session;
     },
   },

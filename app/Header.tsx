@@ -32,15 +32,15 @@ function AccountDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {isLoggedIn ? (
-          <DropdownMenuItem onClick={() => signOut()}>
-            <LogOutIcon className='mr-2' /> Sign Out
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem onClick={() => signIn('google')}>
-            <LogInIcon className='mr-2' /> Sign In
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem
+          onClick={() =>
+            signOut({
+              callbackUrl: '/',
+            })
+          }
+        >
+          <LogOutIcon className='mr-2' /> Sign Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -64,7 +64,13 @@ function Header() {
           Next Video Chat
         </Link>
         <div className='flex items-center gap-4'>
-          <AccountDropdown />
+          {session.data && <AccountDropdown />}
+          {!session.data && (
+            <Button onClick={() => signIn()} variant='link'>
+              <LogInIcon className='mr-2' />
+              Log in
+            </Button>
+          )}
           <ModeToggle />
         </div>
       </div>

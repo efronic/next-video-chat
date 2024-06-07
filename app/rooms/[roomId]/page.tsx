@@ -1,7 +1,7 @@
 import { getRoom } from '@/data-access/rooms';
 import { GithubIcon } from 'lucide-react';
 import Link from 'next/link';
-import { splitTags, TagsList } from '@/components/ui/tags-list';
+import { TagsList } from '@/components/ui/tags-list';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,6 +18,7 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip';
 import { MyVideoPlayer } from './video-player';
+import { splitTags } from '@/lib/utils';
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
   const roomId = props.params.roomId;
