@@ -14,11 +14,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogInIcon, LogOutIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 
 function AccountDropdown() {
   const session = useSession();
-  const isLoggedIn = !!session.data;
-
+  const router = useRouter();
+  const pathName = usePathname();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,6 +33,24 @@ function AccountDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        {pathName !== '/your-rooms' ? (
+          <DropdownMenuItem
+            onClick={() => {
+              router.push('/your-rooms');
+            }}
+          >
+            My rooms
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            onClick={() => {
+              router.push('/');
+            }}
+          >
+            Home
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() =>
             signOut({
