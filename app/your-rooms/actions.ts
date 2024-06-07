@@ -9,7 +9,6 @@ export async function deleteRoomAction(roomId: string) {
   if (!session) {
     throw new Error('User not authenticated');
   }
-
   const room = await getRoom(roomId);
 
   if (room?.userId !== session.user.id) {

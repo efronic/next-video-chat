@@ -1,10 +1,8 @@
 import { db } from '@/db';
-import { room } from '@/db/schema';
+import { Room, room } from '@/db/schema';
 import { getSession } from '@/lib/auth';
 import { eq, like } from 'drizzle-orm';
-import { unstable_noStore } from 'next/cache';
 export async function getRooms(searchTerm: string | undefined) {
-  unstable_noStore();
   const whereClause = searchTerm
     ? like(room.tags, `%${searchTerm}%`)
     : undefined;
@@ -13,13 +11,10 @@ export async function getRooms(searchTerm: string | undefined) {
   return rooms;
 }
 export async function getRoom(roomId: string) {
-  unstable_noStore();
   return await db.query.room.findFirst({ where: eq(room.id, roomId) });
 }
 
-
 export async function getUserRooms() {
-  unstable_noStore();
   const session = await getSession();
   if (!session) {
     throw new Error('You must be logged in to view your rooms.');
@@ -30,7 +25,26 @@ export async function getUserRooms() {
   return rooms;
 }
 
-
 export async function deleteRoom(roomId: string) {
   await db.delete(room).where(eq(room.id, roomId));
+}
+
+export async function createRoom(
+  roomData: Omit<Room, 'id' | 'userId'>,
+  userId: string
+) {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('You must be logged in to create a room.');
+  }
+  await db.insert(room).values({ ...roomData, userId });
+}
+export async function editRoom(
+  roomData: Room,
+) {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('You must be logged in to create a room.');
+  }
+  await db.update(room).set(roomData).where(eq(room.id, roomData.id));
 }

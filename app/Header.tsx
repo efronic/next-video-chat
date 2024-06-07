@@ -20,6 +20,7 @@ function AccountDropdown() {
   const session = useSession();
   const router = useRouter();
   const pathName = usePathname();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -67,15 +68,17 @@ function AccountDropdown() {
 
 function Header() {
   const session = useSession();
+  const isLoggedIn = !!session.data;
+
   return (
-    <header className='bg-gray-100 py-2 dark:bg-gray-900 container mx-auto'>
+    <header className='bg-gray-100 py-2 dark:bg-gray-900 container mx-auto z-10 relative'>
       <div className='flex justify-between items-center'>
         <Link
           className='flex items-center gap-2 text-xl hover:underline'
           href='/'
         >
           <Image
-            src='/assets/Logo.png'
+            src='/assets/logo.png'
             width='60'
             height='60'
             alt='the application icon of a howling wolf'
@@ -83,8 +86,8 @@ function Header() {
           Next Video Chat
         </Link>
         <div className='flex items-center gap-4'>
-          {session.data && <AccountDropdown />}
-          {!session.data && (
+          {isLoggedIn && <AccountDropdown />}
+          {!isLoggedIn && (
             <Button onClick={() => signIn()} variant='link'>
               <LogInIcon className='mr-2' />
               Log in

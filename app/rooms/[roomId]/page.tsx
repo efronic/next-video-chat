@@ -2,7 +2,6 @@ import { getRoom } from '@/data-access/rooms';
 import { GithubIcon } from 'lucide-react';
 import Link from 'next/link';
 import { TagsList } from '@/components/ui/tags-list';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -19,9 +18,12 @@ import {
 } from '@/components/ui/tooltip';
 import { MyVideoPlayer } from './video-player';
 import { splitTags } from '@/lib/utils';
+import { unstable_noStore } from 'next/cache';
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
+  unstable_noStore();
   const roomId = props.params.roomId;
+
   const room = await getRoom(roomId);
   if (!room) {
     return <div>Room not found</div>;
