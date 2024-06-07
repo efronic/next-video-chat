@@ -2,6 +2,22 @@ import { getRoom } from '@/data-access/rooms';
 import { GithubIcon } from 'lucide-react';
 import Link from 'next/link';
 import { splitTags, TagsList } from '@/components/ui/tags-list';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+  CardFooter,
+} from '@/components/ui/card';
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
+import { MyVideoPlayer } from './video-player';
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
   const roomId = props.params.roomId;
@@ -14,27 +30,37 @@ export default async function RoomPage(props: { params: { roomId: string } }) {
     <div className='grid grid-cols-4 min-h-screen container pr-0 pl-0'>
       <div className='col-span-3 p-4 pl-0'>
         <div className='rounded-lg border bg-card text-card-foreground shadow-sm p-4 min-h-screen'>
-          video player
+          <MyVideoPlayer room={room} />
         </div>
       </div>
-      <div className='col-span-1 p-4 pr-0 pl-4'>
-        <div className='rounded-lg border bg-card text-card-foreground shadow-sm p-4 flex flex-col gap-4'>
-          <h1 className='text-base'> Info Panel: {room?.name}</h1>
+      <Card className='flex flex-col'>
+        <CardHeader className='flex flex-row justify-between items-center'>
+          <CardTitle>{room.name}</CardTitle>
           {room.githubRepo && (
-            <Link
-              href={room?.githubRepo}
-              className='flex items-center gap-2 text-center text-sm'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              <GithubIcon />
-              Github Project
-            </Link>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={room.githubRepo}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    <GithubIcon />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{room.githubRepo}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
-          <p className='text-base text-gray-600'>{room?.description}</p>
-          <TagsList tags={tags} />
-        </div>
-      </div>
+        </CardHeader>
+        <CardContent>
+          <CardDescription className='mb-4'>{room.description}</CardDescription>
+          <TagsList tags={splitTags(room.tags)} />
+        </CardContent>
+        <CardFooter></CardFooter>
+      </Card>
     </div>
   );
 }
