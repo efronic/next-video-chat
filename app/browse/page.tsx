@@ -5,6 +5,7 @@ import { getRooms } from '@/data-access/rooms';
 import { SearchBar } from './search-bar';
 import { RoomCard } from '@/components/room-card';
 import { unstable_noStore } from 'next/cache';
+import { NoRoom } from '../no-rooms-available';
 
 export default async function Home({
   searchParams,
@@ -19,19 +20,20 @@ export default async function Home({
       <div className='flex justify-between items-center mb-8'>
         <h1 className='text-4xl font-bold'>Find rooms</h1>
         <Button asChild>
-          <Link href='/create-room'>Create room</Link>
+          <Link href='/create-room'>Create Room</Link>
         </Button>
       </div>
       <div className='mb-8'>
         <SearchBar />
       </div>
       <div className='grid grid-cols-3 gap-4'>
-        {rooms && rooms.length > 0 ? (
-          rooms.map((room) => <RoomCard key={room.id} room={room} />)
-        ) : (
-          <div>No rooms found</div>
-        )}
+        {rooms.map((room) => (
+          <RoomCard key={room.id} room={room} />
+        ))}
       </div>
+      {rooms.length === 0 && (
+        <NoRoom />
+      )}
     </main>
   );
 }
